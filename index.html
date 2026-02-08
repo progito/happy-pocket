@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Pocket — Сознание Изобилия</title>
+    <style>
+        /* ============ CSS VARIABLES ============ */
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-card: #16161a;
+            --bg-elevated: #1c1c21;
+            --text-primary: #f5f5f7;
+            --text-secondary: #8e8e93;
+            --text-muted: #636366;
+            --accent: #f5c542;
+            --accent-secondary: #ffd60a;
+            --accent-glow: rgba(245, 197, 66, 0.25);
+            --accent-dim: rgba(245, 197, 66, 0.08);
+            --success: #30d158;
+            --success-dim: rgba(48, 209, 88, 0.12);
+            --warning: #ff9f0a;
+            --warning-dim: rgba(255, 159, 10, 0.12);
+            --error: #ff453a;
+            --error-dim: rgba(255, 69, 58, 0.12);
+            --purple: #bf5af2;
+            --purple-dim: rgba(191, 90, 242, 0.12);
+            --blue: #0a84ff;
+            --blue-dim: rgba(10, 132, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-radius: 16px;
+            --border-radius-sm: 10px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-elevated: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --text-muted: #aeaeb2;
+            --accent: #c9a227;
+            --accent-glow: rgba(201, 162, 39, 0.2);
+            --accent-dim: rgba(201, 162, 39, 0.08);
+            --border: rgba(0, 0, 0, 0.08);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ============ RESET & BASE ============ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            transition: background var(--transition), color var(--transition);
+            overflow-x: hidden;
+        }
+
+        /* ============ SVG ICONS ============ */
+        .icon {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .icon-sm { width: 18px; height: 18px; }
+        .icon-lg { width: 32px; height: 32px; }
+        .icon-xl { width: 48px; height: 48px; }
+
+        /* ============ APP LAYOUT ============ */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ============ SIDEBAR ============ */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: transform var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 24px var(--accent-glow);
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #000;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            padding: 8px 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--border-radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--accent-dim);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        .nav-item.active .icon {
+            stroke: var(--accent);
+        }
+
+        .nav-item-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: #000;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ============ MAIN CONTENT ============ */
+        .main {
+            flex: 1;
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+            padding: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* ============ CARDS ============ */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all var(--transition);
+        }
+
+        .card:hover {
+            border-color: var(--accent-dim);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon.gold { background: var(--accent-dim); color: var(--accent); }
+        .card-icon.green { background: var(--success-dim); color: var(--success); }
+        .card-icon.purple { background: var(--purple-dim); color: var(--purple); }
+        .card-icon.blue { background: var(--blue-dim); color: var(--blue); }
+
+        /* ============ BUTTONS ============ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            color: #000;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 8px;
+        }
+
+        .btn-ghost:hover {
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-danger { background: var(--error); color: #fff; }
+
+        /* ============ STATE TRACKER (MAIN FEATURE) ============ */
+        .state-tracker {
+            background: linear-gradient(135deg, var(--accent-dim), transparent);
+            border: 1px solid var(--accent-dim);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .state-question {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .state-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .state-option {
+            padding: 20px 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .state-option:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .state-option.selected {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .state-option-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .state-option-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .state-option-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* State colors */
+        .state-expanded .state-option-icon { background: var(--success-dim); color: var(--success); }
+        .state-calm .state-option-icon { background: var(--blue-dim); color: var(--blue); }
+        .state-neutral .state-option-icon { background: var(--accent-dim); color: var(--accent); }
+        .state-tense .state-option-icon { background: var(--warning-dim); color: var(--warning); }
+        .state-contracted .state-option-icon { background: var(--error-dim); color: var(--error); }
+
+        /* ============ BEING PRACTICE ============ */
+        .being-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .being-prompt {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        .being-response {
+            width: 100%;
+            min-height: 100px;
+            padding: 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: 15px;
+            resize: vertical;
+            transition: all var(--transition);
+        }
+
+        .being-response:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* ============ STATS GRID ============ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            transition: all var(--transition);
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-dim);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* ============ GOALS GRID ============ */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .goal-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .goal-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+            transform: translateY(-4px);
+        }
+
+        .goal-card.status-living {
+            border-color: var(--success);
+            box-shadow: 0 0 20px var(--success-dim);
+        }
+
+        .goal-card.status-embodied {
+            border-color: var(--purple);
+            box-shadow: 0 0 20px var(--purple-dim);
+        }
+
+        .goal-card.status-released {
+            border-color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .goal-images {
+            height: 160px;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .goal-images img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .goal-images-placeholder {
+            color: var(--text-muted);
+        }
+
+        .goal-content {
+            padding: 20px;
+        }
+
+        .goal-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .goal-status.forming { background: var(--accent-dim); color: var(--accent); }
+        .goal-status.living { background: var(--success-dim); color: var(--success); }
+        .goal-status.embodied { background: var(--purple-dim); color: var(--purple); }
+        .goal-status.released { background: var(--bg-elevated); color: var(--text-muted); }
+
+        .goal-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .goal-excerpt {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .goal-date {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ============ PHRASES (SPEECH MODULE) ============ */
+        .phrase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all var(--transition);
+        }
+
+        .phrase-card:hover {
+            border-color: var(--accent-dim);
+        }
+
+        .phrase-transform {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .phrase-old {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--error-dim);
+            border-radius: var(--border-radius-sm);
+            color: var(--error);
+            font-size: 14px;
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+
+        .phrase-arrow {
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .phrase-new {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--success-dim);
+            border-radius: var(--border-radius-sm);
+            color: var(--success);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .phrase-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ============ GRATITUDE ============ */
+        .gratitude-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .gratitude-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .gratitude-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ============ MODAL ============ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition);
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* ============ FORM ELEMENTS ============ */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: all var(--transition);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .form-input.error,
+        .form-textarea.error {
+            border-color: var(--error);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-error {
+            color: var(--error);
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .form-error.visible {
+            display: block;
+        }
+
+        /* ============ IMAGE UPLOAD ============ */
+        .image-upload {
+            border: 2px dashed var(--border);
+            border-radius: var(--border-radius-sm);
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .image-upload:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .image-upload-icon {
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+        }
+
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            background: var(--error);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============ WIZARD ============ */
+        .wizard-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .wizard-step {
+            width: 48px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            transition: all var(--transition);
+        }
+
+        .wizard-step.active {
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .wizard-step.completed {
+            background: var(--success);
+        }
+
+        .wizard-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .wizard-panel.active {
+            display: block;
+        }
+
+        /* ============ EMOTION SCALE ============ */
+        .emotion-scale {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .emotion-btn {
+            flex: 1;
+            padding: 16px;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .emotion-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .emotion-btn.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* ============ ANTI-NEED ============ */
+        .anti-need-block {
+            background: linear-gradient(135deg, var(--accent-dim), transparent);
+            border-radius: var(--border-radius-sm);
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .anti-need-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .anti-need-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        /* ============ VALIDATION REPORT ============ */
+        .validation-report {
+            background: var(--bg-elevated);
+            border-radius: var(--border-radius-sm);
+            padding: 20px;
+        }
+
+        .validation-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .validation-item:last-child {
+            border-bottom: none;
+        }
+
+        .validation-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .validation-icon.pass {
+            background: var(--success-dim);
+            color: var(--success);
+        }
+
+        .validation-icon.fail {
+            background: var(--error-dim);
+            color: var(--error);
+        }
+
+        .validation-text {
+            flex: 1;
+        }
+
+        .validation-label {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .validation-hint {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ============ SETTINGS ============ */
+        .settings-group {
+            margin-bottom: 32px;
+        }
+
+        .settings-group-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .settings-item-info h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .settings-item-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ============ TOGGLE ============ */
+        .toggle {
+            width: 52px;
+            height: 28px;
+            background: var(--border);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .toggle.active {
+            background: var(--accent);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all var(--transition);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle.active::after {
+            left: 27px;
+        }
+
+        /* ============ TOAST ============ */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-sm);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+            box-shadow: var(--shadow);
+            min-width: 280px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--error); }
+        .toast.warning { border-left: 4px solid var(--warning); }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast.success .toast-icon { background: var(--success-dim); color: var(--success); }
+        .toast.error .toast-icon { background: var(--error-dim); color: var(--error); }
+        .toast.warning .toast-icon { background: var(--warning-dim); color: var(--warning); }
+
+        /* ============ EMPTY STATE ============ */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: var(--accent-dim);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .empty-title {
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        /* ============ HISTORY TIMELINE ============ */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 11px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .timeline-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-sm);
+            padding: 16px;
+        }
+
+        /* ============ MOBILE MENU ============ */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            color: #000;
+            cursor: pointer;
+            z-index: 99;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .page {
+                padding: 20px;
+            }
+
+            .goals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .state-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .phrase-transform {
+                flex-direction: column;
+            }
+
+            .phrase-old, .phrase-new {
+                width: 100%;
+            }
+        }
+
+        .hidden { display: none !important; }
+        .file-input-hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                        </svg>
+                    </div>
+                    <span class="logo-text">Happy Pocket</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Основное</div>
+                    <div class="nav-item active" data-page="state">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <span class="nav-item-text">Состояние</span>
+                    </div>
+                    <div class="nav-item" data-page="goals">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                            <circle cx="12" cy="12" r="2"/>
+                        </svg>
+                        <span class="nav-item-text">Цели</span>
+                        <span class="nav-badge" id="goalsCount">0</span>
+                    </div>
+                    <div class="nav-item" data-page="speech">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <span class="nav-item-text">Речь</span>
+                    </div>
+                    <div class="nav-item" data-page="gratitude">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        <span class="nav-item-text">Благодарность</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">История</div>
+                    <div class="nav-item" data-page="history">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                        <span class="nav-item-text">Дневник</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="nav-item" data-page="settings">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span class="nav-item-text">Настройки</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main">
+            <!-- STATE PAGE -->
+            <div class="page active" id="page-state">
+                <div class="page-header">
+                    <h1 class="page-title">Состояние Бытия</h1>
+                    <p class="page-subtitle">Главный источник всего — твоё внутреннее состояние</p>
+                </div>
+
+                <!-- STATE TRACKER -->
+                <div class="state-tracker">
+                    <p class="state-question">Из какого состояния ты сейчас действуешь?</p>
+                    <div class="state-options" id="stateOptions">
+                        <div class="state-option state-expanded" data-state="expanded">
+                            <div class="state-option-icon">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                                </svg>
+                            </div>
+                            <div class="state-option-label">Расширенность</div>
+                            <div class="state-option-desc">Открытость, лёгкость</div>
+                        </div>
+                        <div class="state-option state-calm" data-state="calm">
+                            <div class="state-option-icon">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                                    <line x1="6" y1="1" x2="6" y2="4"/>
+                                    <line x1="10" y1="1" x2="10" y2="4"/>
+                                    <line x1="14" y1="1" x2="14" y2="4"/>
+                                </svg>
+                            </div>
+                            <div class="state-option-label">Спокойствие</div>
+                            <div class="state-option-desc">Уравновешенность</div>
+                        </div>
+                        <div class="state-option state-neutral" data-state="neutral">
+                            <div class="state-option-icon">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="8" y1="15" x2="16" y2="15"/>
+                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                                </svg>
+                            </div>
+                            <div class="state-option-label">Нейтральность</div>
+                            <div class="state-option-desc">Наблюдение</div>
+                        </div>
+                        <div class="state-option state-tense" data-state="tense">
+                            <div class="state-option-icon">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                            </div>
+                            <div class="state-option-label">Напряжение</div>
+                            <div class="state-option-desc">Тревога, беспокойство</div>
+                        </div>
+                        <div class="state-option state-contracted" data-state="contracted">
+                            <div class="state-option-icon">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M16 16s-1.5-2-4-2-4 2-4 2"/>
+                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                                </svg>
+                            </div>
+                            <div class="state-option-label">Сжатость</div>
+                            <div class="state-option-desc">Страх, нужда</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="saveStateBtn">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Зафиксировать состояние
+                    </button>
+                </div>
+
+                <!-- BEING PRACTICE -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Практика «Бытие»</h3>
+                        <div class="card-icon gold">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="being-card">
+                        <p class="being-prompt">Кто я прямо сейчас?</p>
+                        <textarea class="being-response" id="beingWho" placeholder="Я — человек, который..."></textarea>
+                    </div>
+                    <div class="being-card">
+                        <p class="being-prompt">Из какого состояния я собираюсь действовать сегодня?</p>
+                        <textarea class="being-response" id="beingAction" placeholder="Сегодня я действую из состояния..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="saveBeingBtn">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        Сохранить практику
+                    </button>
+                </div>
+
+                <!-- ABUNDANCE INDICATOR -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--success-dim); color: var(--success);">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="statExpanded">0</div>
+                        <div class="stat-label">Дней в расширенности</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--accent-dim); color: var(--accent);">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="6"/>
+                                <circle cx="12" cy="12" r="2"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="statGoalsTotal">0</div>
+                        <div class="stat-label">Целей создано</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--purple-dim); color: var(--purple);">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="statEmbodied">0</div>
+                        <div class="stat-label">Воплощено</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--error-dim); color: var(--error);">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="statGratitude">0</div>
+                        <div class="stat-label">Благодарностей</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GOALS PAGE -->
+            <div class="page" id="page-goals">
+                <div class="page-header">
+                    <h1 class="page-title">Цели Изобилия</h1>
+                    <p class="page-subtitle">Карта, а не двигатель. Направление, а не давление.</p>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <button class="btn btn-primary" id="addGoalBtn">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Новая цель
+                    </button>
+                </div>
+
+                <div class="goals-grid" id="goalsGrid"></div>
+                
+                <div class="empty-state hidden" id="goalsEmpty">
+                    <div class="empty-icon">
+                        <svg class="icon icon-lg" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                            <circle cx="12" cy="12" r="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-title">Нет целей</h3>
+                    <p>Создайте первую цель, сформулированную из состояния «уже есть»</p>
+                </div>
+            </div>
+
+            <!-- SPEECH PAGE -->
+            <div class="page" id="page-speech">
+                <div class="page-header">
+                    <h1 class="page-title">Трансформация Речи</h1>
+                    <p class="page-subtitle">Речь — инструкция Вселенной. Меняй слова — меняй реальность.</p>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <button class="btn btn-primary" id="addPhraseBtn">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Добавить трансформацию
+                    </button>
+                </div>
+
+                <div id="phrasesList"></div>
+
+                <div class="empty-state hidden" id="phrasesEmpty">
+                    <div class="empty-icon">
+                        <svg class="icon icon-lg" viewBox="0 0 24 24">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-title">Нет трансформаций</h3>
+                    <p>Добавьте фразы, которые хотите изменить</p>
+                </div>
+
+                <!-- SUGGESTED PHRASES -->
+                <div class="card" style="margin-top: 32px;">
+                    <div class="card-header">
+                        <h3 class="card-title">Примеры трансформаций</h3>
+                    </div>
+                    <div class="phrase-card">
+                        <div class="phrase-transform">
+                            <div class="phrase-old">«Мне не хватает денег»</div>
+                            <div class="phrase-arrow">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                    <polyline points="12 5 19 12 12 19"/>
+                                </svg>
+                            </div>
+                            <div class="phrase-new">«Деньги свободно входят в мою жизнь»</div>
+                        </div>
+                    </div>
+                    <div class="phrase-card">
+                        <div class="phrase-transform">
+                            <div class="phrase-old">«Я хочу это получить»</div>
+                            <div class="phrase-arrow">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                    <polyline points="12 5 19 12 12 19"/>
+                                </svg>
+                            </div>
+                            <div class="phrase-new">«Это уже часть моей жизни»</div>
+                        </div>
+                    </div>
+                    <div class="phrase-card">
+                        <div class="phrase-transform">
+                            <div class="phrase-old">«Мне тяжело»</div>
+                            <div class="phrase-arrow">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                    <polyline points="12 5 19 12 12 19"/>
+                                </svg>
+                            </div>
+                            <div class="phrase-new">«Я позволяю лёгкости войти»</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRATITUDE PAGE -->
+            <div class="page" id="page-gratitude">
+                <div class="page-header">
+                    <h1 class="page-title">Благодарность</h1>
+                    <p class="page-subtitle">Не привычка, а состояние. Где уже есть изобилие?</p>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <button class="btn btn-primary" id="addGratitudeBtn">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Добавить благодарность
+                    </button>
+                </div>
+
+                <!-- GRATITUDE PROMPTS -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Фокус на изобилии</h3>
+                        <div class="card-icon green">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="being-card">
+                        <p class="being-prompt">Что уже работает в моей жизни?</p>
+                        <textarea class="being-response" id="gratitudeWorks" placeholder="В моей жизни уже работает..."></textarea>
+                    </div>
+                    <div class="being-card">
+                        <p class="being-prompt">Где я уже вижу изобилие?</p>
+                        <textarea class="being-response" id="gratitudeAbundance" placeholder="Изобилие уже проявляется в..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="saveGratitudePromptBtn">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        Сохранить
+                    </button>
+                </div>
+
+                <h3 style="margin: 32px 0 16px; color: var(--text-secondary);">История благодарностей</h3>
+                <div id="gratitudeList"></div>
+                
+                <div class="empty-state hidden" id="gratitudeEmpty">
+                    <div class="empty-icon">
+                        <svg class="icon icon-lg" viewBox="0 0 24 24">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-title">Нет записей</h3>
+                    <p>Начните фиксировать благодарность</p>
+                </div>
+            </div>
+
+            <!-- HISTORY PAGE -->
+            <div class="page" id="page-history">
+                <div class="page-header">
+                    <h1 class="page-title">Дневник Состояний</h1>
+                    <p class="page-subtitle">История вашего внутреннего путешествия</p>
+                </div>
+
+                <div class="timeline" id="historyTimeline"></div>
+                
+                <div class="empty-state hidden" id="historyEmpty">
+                    <div class="empty-icon">
+                        <svg class="icon icon-lg" viewBox="0 0 24 24">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-title">Нет записей</h3>
+                    <p>Фиксируйте своё состояние на главной странице</p>
+                </div>
+            </div>
+
+            <!-- SETTINGS PAGE -->
+            <div class="page" id="page-settings">
+                <div class="page-header">
+                    <h1 class="page-title">Настройки</h1>
+                    <p class="page-subtitle">Персонализация приложения</p>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">Оформление</div>
+                    <div class="settings-item">
+                        <div class="settings-item-info">
+                            <h4>Светлая тема</h4>
+                            <p>Переключить на светлый режим</p>
+                        </div>
+                        <div class="toggle" id="themeToggle"></div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">Данные</div>
+                    <div class="settings-item">
+                        <div class="settings-item-info">
+                            <h4>Экспорт данных</h4>
+                            <p>Скачать все данные в JSON файл</p>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="exportBtn">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            Экспорт
+                        </button>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-info">
+                            <h4>Импорт данных</h4>
+                            <p>Загрузить данные из JSON файла</p>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="importBtn">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Импорт
+                        </button>
+                        <input type="file" id="importInput" class="file-input-hidden" accept=".json">
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-info">
+                            <h4>Очистить данные</h4>
+                            <p>Удалить все данные приложения</p>
+                        </div>
+                        <button class="btn btn-danger btn-sm" id="clearDataBtn">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            Очистить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">Информация</div>
+                    <div class="settings-item">
+                        <div class="settings-item-info">
+                            <h4>Автосохранение</h4>
+                            <p id="lastBackupInfo">Резервное копирование каждые 20 дней</p>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-info">
+                            <h4>Версия</h4>
+                            <p>Happy Pocket v3.0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MOBILE MENU BUTTON -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <svg class="icon" viewBox="0 0 24 24">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+
+    <!-- GOAL MODAL -->
+    <div class="modal-overlay" id="goalModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="goalModalTitle">Новая цель</h3>
+                <button class="btn btn-ghost btn-icon" id="goalModalClose">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="wizard-progress">
+                    <div class="wizard-step active" data-step="1"></div>
+                    <div class="wizard-step" data-step="2"></div>
+                    <div class="wizard-step" data-step="3"></div>
+                    <div class="wizard-step" data-step="4"></div>
+                    <div class="wizard-step" data-step="5"></div>
+                </div>
+
+                <!-- STEP 1 -->
+                <div class="wizard-panel active" data-panel="1">
+                    <h4 style="margin-bottom: 16px; color: var(--accent);">Шаг 1: Формулировка</h4>
+                    <div class="form-group">
+                        <label class="form-label">Моя реальность (в настоящем времени)</label>
+                        <input type="text" class="form-input" id="goalTitle" 
+                               placeholder="Я живу в просторном доме у моря...">
+                        <p class="form-hint">Формулируйте как уже свершившееся. Избегайте: «хочу», «буду», «нужно»</p>
+                        <p class="form-error" id="titleError"></p>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="wizard-panel" data-panel="2">
+                    <h4 style="margin-bottom: 16px; color: var(--accent);">Шаг 2: Состояние</h4>
+                    <div class="form-group">
+                        <label class="form-label">Как я себя чувствую, когда это уже есть?</label>
+                        <textarea class="form-textarea" id="goalFeelings" 
+                                  placeholder="Я ощущаю спокойствие, свободу..."></textarea>
+                        <p class="form-error" id="feelingsError"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Почему для меня это естественно?</label>
+                        <textarea class="form-textarea" id="goalConfidence" 
+                                  placeholder="Потому что я заслуживаю лучшего..."></textarea>
+                        <p class="form-error" id="confidenceError"></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Кем я являюсь в этом состоянии?</label>
+                        <textarea class="form-textarea" id="goalIdentity" 
+                                  placeholder="Я — успешный, реализованный человек..."></textarea>
+                        <p class="form-error" id="identityError"></p>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="wizard-panel" data-panel="3">
+                    <h4 style="margin-bottom: 16px; color: var(--accent);">Шаг 3: Визуализация</h4>
+                    <div class="form-group">
+                        <label class="form-label">Образы (1–7 картинок)</label>
+                        <div class="image-upload" id="imageUpload">
+                            <div class="image-upload-icon">
+                                <svg class="icon icon-xl" viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                    <polyline points="21 15 16 10 5 21"/>
+                                </svg>
+                            </div>
+                            <p>Нажмите для загрузки</p>
+                            <p style="font-size: 13px; color: var(--text-secondary);">Образ — якорь материализации</p>
+                        </div>
+                        <input type="file" class="file-input-hidden" id="imageInput" accept="image/*" multiple>
+                        <div class="image-preview-grid" id="imagePreviewGrid"></div>
+                        <p class="form-error" id="imagesError"></p>
+                    </div>
+                </div>
+
+                <!-- STEP 4 -->
+                <div class="wizard-panel" data-panel="4">
+                    <h4 style="margin-bottom: 16px; color: var(--accent);">Шаг 4: Проверка</h4>
+                    <div class="form-group">
+                        <label class="form-label">Насколько это ощущается реальным?</label>
+                        <div class="emotion-scale" id="emotionScale">
+                            <button class="emotion-btn" data-value="1">1</button>
+                            <button class="emotion-btn" data-value="2">2</button>
+                            <button class="emotion-btn" data-value="3">3</button>
+                            <button class="emotion-btn" data-value="4">4</button>
+                            <button class="emotion-btn" data-value="5">5</button>
+                        </div>
+                        <p class="form-hint">1 — не верю, 5 — как будто уже живу этим</p>
+                        <p class="form-error" id="emotionError"></p>
+                    </div>
+
+                    <div class="anti-need-block">
+                        <p class="anti-need-text">«Если этого не будет — со мной всё в порядке?»</p>
+                        <div class="anti-need-buttons">
+                            <button class="btn btn-secondary" id="antiNeedNo">Нет, не в порядке</button>
+                            <button class="btn btn-primary" id="antiNeedYes">Да, я в порядке</button>
+                        </div>
+                        <p class="form-error" id="antiNeedError"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">За что я благодарен(на), как будто это уже есть?</label>
+                        <textarea class="form-textarea" id="goalGratitude" 
+                                  placeholder="Я благодарен(на) за..."></textarea>
+                        <p class="form-error" id="gratitudeError"></p>
+                    </div>
+                </div>
+
+                <!-- STEP 5 -->
+                <div class="wizard-panel" data-panel="5">
+                    <h4 style="margin-bottom: 16px; color: var(--accent);">Шаг 5: Проверка сознания</h4>
+                    <div class="validation-report" id="validationReport"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="wizardPrev">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <line x1="19" y1="12" x2="5" y2="12"/>
+                        <polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                    Назад
+                </button>
+                <button class="btn btn-primary" id="wizardNext">
+                    Далее
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW GOAL MODAL -->
+    <div class="modal-overlay" id="viewGoalModal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="viewGoalTitle">Цель</h3>
+                <button class="btn btn-ghost btn-icon" id="viewGoalClose">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="viewGoalBody"></div>
+        </div>
+    </div>
+
+    <!-- PHRASE MODAL -->
+    <div class="modal-overlay" id="phraseModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Трансформация фразы</h3>
+                <button class="btn btn-ghost btn-icon" id="phraseModalClose">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Старая фраза (из нужды)</label>
+                    <input type="text" class="form-input" id="phraseOld" placeholder="Мне не хватает...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Новая фраза (из изобилия)</label>
+                    <input type="text" class="form-input" id="phraseNew" placeholder="Я позволяю...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="phraseCancelBtn">Отмена</button>
+                <button class="btn btn-primary" id="phraseSaveBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRATITUDE MODAL -->
+    <div class="modal-overlay" id="gratitudeModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Благодарность</h3>
+                <button class="btn btn-ghost btn-icon" id="gratitudeModalClose">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">За что вы благодарны прямо сейчас?</label>
+                    <textarea class="form-textarea" id="gratitudeText" rows="4" 
+                              placeholder="Я благодарен(на) за..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="gratitudeCancelBtn">Отмена</button>
+                <button class="btn btn-primary" id="gratitudeSaveBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
